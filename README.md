@@ -1,6 +1,6 @@
 # aws-3tier-web
 
-[![CI](https://github.com/OWNER/aws-3tier-web/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/aws-3tier-web/actions/workflows/ci.yml)
+[![CI](https://github.com/gnk-satou/aws-3tier-web/actions/workflows/ci.yml/badge.svg)](https://github.com/gnk-satou/aws-3tier-web/actions/workflows/ci.yml)
 ![Terraform](https://img.shields.io/badge/IaC-Terraform-844FBA?logo=terraform&logoColor=white)
 ![AWS](https://img.shields.io/badge/Cloud-AWS-232F3E?logo=amazonwebservices&logoColor=white)
 
