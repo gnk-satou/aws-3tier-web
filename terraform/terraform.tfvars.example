@@ -1,0 +1,5 @@
+# デフォルト値のままなら tfvars は不要。変更したい場合のみコピーして使う。
+# cp terraform.tfvars.example terraform.tfvars
+
+# region        = "ap-northeast-1"
+# instance_type = "t3.micro"
