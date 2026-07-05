@@ -33,8 +33,8 @@ resource "aws_instance" "web" {
     <html lang="ja">
     <head><meta charset="utf-8"><title>aws-3tier-web</title></head>
     <body>
-      <h1>aws-3tier-web : Step 1 OK</h1>
-      <p>VPC + EC2 (nginx) built with Terraform</p>
+      <h1>aws-3tier-web : Step 2 OK</h1>
+      <p>ALB -> EC2 (nginx) built with Terraform</p>
     </body>
     </html>
     HTML
