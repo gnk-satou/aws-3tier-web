@@ -36,8 +36,8 @@ graph LR
 | Step | 内容 | 状態 |
 |------|------|------|
 | 1 | VPC + パブリックサブネット + EC2(nginx, SSM 接続) | ✅ [証跡](docs/evidence/step1/) |
-| 2 | ALB を追加し、EC2 への HTTP を ALB 経由に限定 | 🚧 |
-| 3 | プライベートサブネット + NAT + RDS、EC2 をプライベート化 | ⬜ |
+| 2 | ALB を追加し、EC2 への HTTP を ALB 経由に限定 | ✅ [証跡](docs/evidence/step2/) |
+| 3 | プライベートサブネット + NAT + RDS、EC2 をプライベート化 | 🚧 |
 
 ## 設計方針
 
