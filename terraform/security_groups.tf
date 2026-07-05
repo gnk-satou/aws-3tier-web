@@ -28,3 +28,27 @@ resource "aws_vpc_security_group_egress_rule" "web_all" {
   ip_protocol       = "-1"
   cidr_ipv4         = "0.0.0.0/0"
 }
+
+# ---------------------------------------------------------------------------
+# DB SG (Step 3: MySQL 3306 is allowed only from the web security group)
+# No egress rules: RDS does not initiate outbound connections
+# ---------------------------------------------------------------------------
+
+resource "aws_security_group" "db" {
+  name        = "${local.name_prefix}-db-sg"
+  description = "DB tier security group"
+  vpc_id      = aws_vpc.main.id
+
+  tags = {
+    Name = "${local.name_prefix}-db-sg"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "db_mysql" {
+  security_group_id            = aws_security_group.db.id
+  description                  = "MySQL from web tier only"
+  ip_protocol                  = "tcp"
+  from_port                    = 3306
+  to_port                      = 3306
+  referenced_security_group_id = aws_security_group.web.id
+}
