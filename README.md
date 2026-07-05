@@ -37,7 +37,12 @@ graph LR
 |------|------|------|
 | 1 | VPC + パブリックサブネット + EC2(nginx, SSM 接続) | ✅ [証跡](docs/evidence/step1/) |
 | 2 | ALB を追加し、EC2 への HTTP を ALB 経由に限定 | ✅ [証跡](docs/evidence/step2/) |
-| 3 | プライベートサブネット + NAT + RDS、EC2 をプライベート化 | 🚧 |
+| 3 | プライベートサブネット化 + RDS(NAT 追加、EC2 をプライベート化) | ✅ [証跡](docs/evidence/step3/) |
+| 4 | HTTPS 化(Route 53 + ACM)+ WAF | ⬜ |
+| 5 | Auto Scaling(Launch Template + ASG) | ⬜ |
+| 6 | 監視(CloudWatch アラーム + SNS、ALB アクセスログ / VPC Flow Logs) | ⬜ |
+
+※ Step 3 完了後、Terraform ステートを S3 バックエンドに移行予定(ステップとは別の独立 PR)
 
 ## 設計方針
 
@@ -61,9 +66,10 @@ terraform init
 terraform plan
 terraform apply
 
-# 動作確認(Step 2)
-# ブラウザで http://<alb_dns_name>/ を開く(直 IP アクセスは SG で遮断される)
+# 動作確認(Step 3)
+# ブラウザで http://<alb_dns_name>/ を開く(EC2 はプライベートサブネット、ALB 経由のみ)
 # SSM 接続: aws ssm start-session --target <web_instance_id>
+# RDS 接続(EC2 上から): mysql -h <rds_endpoint の :3306 を除いたホスト名> -u dbadmin -p(パスワードは Secrets Manager)
 
 # 確認が終わったら必ず破棄
 terraform destroy
@@ -73,9 +79,24 @@ terraform destroy
 
 ## ディレクトリ構成
 
+各ファイル末尾の `[Step N]` は導入ステップを示す(例: `[Step 1→3 拡張]` は Step 1 で導入し Step 3 で拡張)。
+タグ `stepN` をチェックアウトすると各ステップ時点の構成を再現できる。
+
 ```
 .
-├── terraform/          # Terraform 本体
+├── terraform/
+│   ├── providers.tf         # プロバイダ設定 [Step 1]
+│   ├── versions.tf          # Terraform / プロバイダのバージョン制約 [Step 1]
+│   ├── variables.tf         # 入力変数 [Step 1→随時拡張]
+│   ├── locals.tf            # 共通ローカル値(タグ・命名)[Step 1]
+│   ├── network.tf           # VPC / サブネット / ルート / NAT [Step 1→3 拡張]
+│   ├── security_groups.tf   # SG(ALB / Web / DB)[Step 1→3 拡張]
+│   ├── iam.tf               # SSM 用 IAM ロール / インスタンスプロファイル [Step 1]
+│   ├── ec2.tf               # EC2(nginx, IMDSv2, EBS 暗号化)[Step 1→3 プライベート化]
+│   ├── alb.tf               # ALB / ターゲットグループ / リスナー [Step 2]
+│   ├── rds.tf               # RDS MySQL(マネージドマスターパスワード)[Step 3]
+│   ├── outputs.tf           # 出力(ALB DNS 名など)[Step 1→随時拡張]
+│   └── terraform.tfvars.example
 ├── docs/
 │   ├── adr/            # Architecture Decision Records
 │   └── evidence/       # 動作確認スクリーンショット(Step ごと)
