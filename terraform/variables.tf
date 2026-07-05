@@ -39,3 +39,33 @@ variable "instance_type" {
   type        = string
   default     = "t3.micro"
 }
+
+variable "private_app_subnet_cidrs" {
+  description = "CIDR blocks for private app subnets (one per AZ)"
+  type        = list(string)
+  default     = ["10.0.10.0/24", "10.0.11.0/24"]
+}
+
+variable "private_db_subnet_cidrs" {
+  description = "CIDR blocks for private DB subnets (one per AZ)"
+  type        = list(string)
+  default     = ["10.0.20.0/24", "10.0.21.0/24"]
+}
+
+variable "db_instance_class" {
+  description = "RDS instance class"
+  type        = string
+  default     = "db.t4g.micro"
+}
+
+variable "db_name" {
+  description = "Initial database name"
+  type        = string
+  default     = "appdb"
+}
+
+variable "db_username" {
+  description = "RDS master username (password is managed by Secrets Manager, see ADR 0007)"
+  type        = string
+  default     = "dbadmin"
+}
