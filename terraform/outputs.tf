@@ -14,6 +14,11 @@ output "web_instance_id" {
 }
 
 output "web_public_ip" {
-  description = "Web EC2 public IP (Step 1 verification: http://<ip>/)"
+  description = "Web EC2 public IP (direct HTTP is blocked since Step 2; used to demonstrate SG restriction)"
   value       = aws_instance.web.public_ip
+}
+
+output "alb_dns_name" {
+  description = "ALB DNS name (Step 2 verification: http://<dns>/)"
+  value       = aws_lb.main.dns_name
 }

@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# Step 1: Web SG (HTTP from anywhere — temporary, will be restricted to ALB in Step 2)
+# Web SG (Step 2: HTTP is allowed only from the ALB security group)
 # ---------------------------------------------------------------------------
 
 resource "aws_security_group" "web" {
@@ -12,15 +12,14 @@ resource "aws_security_group" "web" {
   }
 }
 
-# Step 1 only: allow HTTP directly for verification.
-# Step 2 will replace this with an ALB-SG-sourced rule.
+# Step 2: direct HTTP from the internet is closed; only the ALB can reach the web tier
 resource "aws_vpc_security_group_ingress_rule" "web_http" {
-  security_group_id = aws_security_group.web.id
-  description       = "HTTP for Step 1 verification"
-  ip_protocol       = "tcp"
-  from_port         = 80
-  to_port           = 80
-  cidr_ipv4         = "0.0.0.0/0"
+  security_group_id            = aws_security_group.web.id
+  description                  = "HTTP from ALB only"
+  ip_protocol                  = "tcp"
+  from_port                    = 80
+  to_port                      = 80
+  referenced_security_group_id = aws_security_group.alb.id
 }
 
 resource "aws_vpc_security_group_egress_rule" "web_all" {
